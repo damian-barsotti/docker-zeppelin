@@ -17,7 +17,7 @@ RUN find -name \._\* -exec rm -f {} \; || true
 RUN --mount=type=bind,source=./sh-interpreter-setting.json,target=/tmp/sh-interpreter-setting.json \
     [ -d ./interpreter/sh ] || \
         ( \
-            ./bin/install-interpreter.sh --name sh --artifact org.apache.zeppelin:zeppelin-shell:0.11.1 && \
+            ./bin/install-interpreter.sh --name sh --artifact org.apache.zeppelin:zeppelin-shell:${zeppelin_version} && \
             cp /tmp/sh-interpreter-setting.json ./interpreter/sh/interpreter-setting.json && \
             chmod 775 local-repo \
         )
