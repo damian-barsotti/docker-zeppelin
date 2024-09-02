@@ -1,4 +1,6 @@
-FROM apache/zeppelin:0.11.1
+ARG zeppelin_version=0.11.1
+FROM apache/zeppelin:${zeppelin_version}
+
 LABEL maintainer="Damian Barsotti<damian@famaf.unc.edu.ar>"
 
 ARG spark_version=3.4.3
