@@ -1,11 +1,24 @@
-FROM apache/zeppelin:0.10.0
+FROM apache/zeppelin:0.11.1
 LABEL maintainer="Damian Barsotti<damian@famaf.unc.edu.ar>"
 
-ENV S_VERSION="2.4.8"
+ARG spark_version=3.4.3
+ARG hadoop_version="3"
+ARG spark_download_url=https://archive.apache.org/dist/spark
 
 ENV SPARK_HOME="/opt/spark"
 
 USER root
+
+RUN find -name \._\* -exec rm -f {} \; || true
+
+# Install shell interpreter if doesn't exists
+RUN --mount=type=bind,source=./sh-interpreter-setting.json,target=/tmp/sh-interpreter-setting.json \
+    [ -d ./interpreter/sh ] || \
+        ( \
+            ./bin/install-interpreter.sh --name sh --artifact org.apache.zeppelin:zeppelin-shell:0.11.1 && \
+            cp /tmp/sh-interpreter-setting.json ./interpreter/sh/interpreter-setting.json && \
+            chmod 775 local-repo \
+        )
 
 COPY ./start.sh /start.sh
 
@@ -27,9 +40,11 @@ RUN apt-get autoremove && apt-get clean
 
 RUN echo "Download Spark binary" && \
     mkdir -p ${SPARK_HOME} && \
-    wget -nv -O /tmp/spark-${S_VERSION}-bin-hadoop2.7.tgz https://archive.apache.org/dist/spark/spark-${S_VERSION}/spark-${S_VERSION}-bin-hadoop2.7.tgz && \
-    tar --strip-components=1 -zxvf /tmp/spark-${S_VERSION}-bin-hadoop2.7.tgz -C ${SPARK_HOME} && \
-    rm -f /tmp/spark-${S_VERSION}-bin-hadoop2.7.tgz && \
+    wget --progress=dot:giga -O /tmp/spark.tgz ${spark_download_url}/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
+
+RUN echo "Install Spark" && \
+    tar --strip-components=1 -zxvf /tmp/spark.tgz -C ${SPARK_HOME} && \
+    rm -f /tmp/spark.tgz && \
     chown -R root:root ${SPARK_HOME} && \
     chmod 775 ${SPARK_HOME}
 
