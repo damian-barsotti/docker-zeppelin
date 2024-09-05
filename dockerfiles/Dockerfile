@@ -14,7 +14,7 @@ USER root
 
 RUN find -name \._\* -exec rm -f {} \; || true
 
-# Install shell interpreter if doesn't exists
+# Install shell interpreter if it doesn't exists
 RUN --mount=type=bind,source=./sh-interpreter-setting.json,target=/tmp/sh-interpreter-setting.json \
     [ -d ./interpreter/sh ] || \
         ( \
@@ -50,6 +50,8 @@ RUN echo "Install Spark" && \
     rm -f /tmp/spark.tgz && \
     chown -R root:root ${SPARK_HOME} && \
     chmod 775 ${SPARK_HOME}
+
+RUN chmod 775 /opt/zeppelin/.cache
 
 #CMD ["/usr/bin/screen", "-s", "/bin/bash", "bin/zeppelin.sh" ]
 
