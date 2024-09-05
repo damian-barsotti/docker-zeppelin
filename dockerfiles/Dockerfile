@@ -3,6 +3,7 @@ FROM apache/zeppelin:${zeppelin_version}
 
 LABEL maintainer="Damian Barsotti<damian@famaf.unc.edu.ar>"
 
+ARG zeppelin_version
 ARG spark_version=3.4.3
 ARG hadoop_version="3"
 ARG spark_download_url=https://archive.apache.org/dist/spark
