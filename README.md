@@ -11,5 +11,5 @@
 ## How to run
 
 ```sh
-docker run -it --rm --hostname localhost -p 8080:8080 -p 4040:4040
+docker run -it -p 8080:8080 -p 4040:4040
 ```
