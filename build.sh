@@ -2,8 +2,8 @@
 
 set -x
 
-IM_VERSION=2.0
-IM_BASE_VERSION=0.11.1
+IM_VERSION=2.1
+IM_BASE_VERSION=0.11.2
 
 IM=diplodatos/bigdata:$IM_VERSION
 
