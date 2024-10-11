@@ -12,7 +12,7 @@ ENV SPARK_HOME="/opt/spark"
 
 USER root
 
-RUN find -name \._\* -exec rm -f {} \; || true
+RUN find -name \._\* -type f -exec rm -f {} \; || true
 
 # Install shell interpreter if it doesn't exists
 RUN --mount=type=bind,source=./sh-interpreter-setting.json,target=/tmp/sh-interpreter-setting.json \
