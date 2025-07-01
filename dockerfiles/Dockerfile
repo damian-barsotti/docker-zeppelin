@@ -1,10 +1,10 @@
-ARG zeppelin_version=0.11.2
+ARG zeppelin_version=0.12.0
 FROM apache/zeppelin:${zeppelin_version}
 
 LABEL maintainer="Damian Barsotti<damian@famaf.unc.edu.ar>"
 
 ARG zeppelin_version
-ARG spark_version=3.4.3
+ARG spark_version=3.5.6
 ARG hadoop_version="3"
 ARG spark_download_url=https://archive.apache.org/dist/spark
 
@@ -14,21 +14,11 @@ USER root
 
 RUN find -name \._\* -type f -exec rm -f {} \; || true
 
-# Install shell interpreter if it doesn't exists
-RUN --mount=type=bind,source=./sh-interpreter-setting.json,target=/tmp/sh-interpreter-setting.json \
-    [ -d ./interpreter/sh ] || \
-        ( \
-            ./bin/install-interpreter.sh --name sh --artifact org.apache.zeppelin:zeppelin-shell:${zeppelin_version} && \
-            cp /tmp/sh-interpreter-setting.json ./interpreter/sh/interpreter-setting.json && \
-            chmod 775 local-repo \
-        )
-
 COPY ./start.sh /start.sh
 
 RUN chmod 755 /start.sh
 
 RUN apt-get update -q && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -yq  apt-utils && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq \
         bash-completion \
         iputils-ping \
@@ -53,6 +43,7 @@ RUN echo "Install Spark" && \
 
 RUN chmod 775 /opt/zeppelin/.cache
 
-#CMD ["/usr/bin/screen", "-s", "/bin/bash", "bin/zeppelin.sh" ]
+RUN --mount=type=bind,source=./requirements.txt,target=/tmp/requirements.txt \
+    pip install -r /tmp/requirements.txt
 
 CMD ["/start.sh" ]
