@@ -37,5 +37,5 @@ then
     docker image rm $IM
 fi
 
-docker build --tag $IM -f "$DIRNAME"/dockerfiles/Dockerfile "$DIRNAME"/context
+docker build --tag $IM -f "$DIRNAME"/dockerfiles/Dockerfile "$@" "$DIRNAME"/context
 
