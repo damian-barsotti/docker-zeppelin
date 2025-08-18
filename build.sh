@@ -2,7 +2,7 @@
 
 set -x
 
-IM_VERSION=3.0
+IM_VERSION=3.1
 IM_BASE_VERSION=0.12.0
 
 IM=diplodatos/bigdata:$IM_VERSION
@@ -38,4 +38,3 @@ then
 fi
 
 docker build --tag $IM -f "$DIRNAME"/dockerfiles/Dockerfile "$@" "$DIRNAME"/context
-
