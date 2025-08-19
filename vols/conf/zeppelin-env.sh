@@ -35,7 +35,7 @@
 # export ZEPPELIN_PID_DIR                       # The pid files are stored. ${ZEPPELIN_HOME}/run by default.
 # export ZEPPELIN_WAR_TEMPDIR                   # The location of jetty temporary directory.
 # export ZEPPELIN_NOTEBOOK_DIR                  # Where notebook saved
-# export ZEPPELIN_NOTEBOOK_HOMESCREEN           # Id of notebook to be displayed in homescreen. ex) 2A94M5J1Z
+export ZEPPELIN_NOTEBOOK_HOMESCREEN="2M4KC13PD"           # Id of notebook to be displayed in homescreen. ex) 2A94M5J1Z
 # export ZEPPELIN_NOTEBOOK_HOMESCREEN_HIDE      # hide homescreen notebook from list when this value set to "true". default "false"
 
 # export ZEPPELIN_NOTEBOOK_S3_BUCKET            # Bucket where notebook saved
