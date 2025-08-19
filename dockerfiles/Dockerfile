@@ -46,4 +46,24 @@ RUN chmod 775 /opt/zeppelin/.cache
 RUN --mount=type=bind,source=./requirements.txt,target=/tmp/requirements.txt \
     pip install -r /tmp/requirements.txt
 
-CMD ["/start.sh" ]
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq sudo
+
+# RUN echo "zeppelin ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/zeppelin
+
+RUN sudo adduser --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-password damian
+
+RUN sudo adduser --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-password user1
+
+RUN sudo adduser --quiet --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-password user2
+
+# RUN mv /opt/zeppelin/notebook /tmp/
+
+# RUN mkdir /opt/zeppelin/notebook
+
+# RUN cp -a /tmp/notebook /opt/zeppelin/notebook/user1
+# RUN cp -a /tmp/notebook /opt/zeppelin/notebook/user2
+# RUN rm -rf /tmp/notebook
+
+COPY ./bin/interpreter.sh /opt/zeppelin/bin/
+
+# CMD ["/start.sh" ]
