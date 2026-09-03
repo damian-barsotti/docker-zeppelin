@@ -1,6 +1,6 @@
 # Docker Zeppelin
 
-[Apache Zeppelin](https://zeppelin.apache.org/) 0.12.0 Docker image with some adds and fixes.
+[Apache Zeppelin](https://zeppelin.apache.org/) 0.12.1 Docker image with some adds and fixes.
 
 ## How to build
 

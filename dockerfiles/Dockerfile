@@ -1,4 +1,4 @@
-ARG zeppelin_version=0.12.0
+ARG zeppelin_version=0.12.1
 FROM apache/zeppelin:${zeppelin_version}
 
 LABEL maintainer="Damian Barsotti<damian@famaf.unc.edu.ar>"
