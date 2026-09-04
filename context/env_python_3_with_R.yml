@@ -6,7 +6,9 @@ dependencies:
   - python=3.11
   - pycodestyle
   - scipy
-  - numpy
+  # PySpark 3.5 no esta testeado contra numpy 2.x ni pandas 3.x.
+  - numpy<2
+  - pandas<3
   - grpcio
   - protobuf
   - pandasql
