@@ -1,1 +1,2 @@
-plotly~=5.18.0
+# plotly y el resto del stack Python vienen de env_python_3_with_R.yml.
+# Este archivo queda para dependencias que se instalen por pip.
