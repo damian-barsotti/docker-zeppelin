@@ -24,7 +24,7 @@ FROM ubuntu:20.04
 LABEL maintainer="Damian Barsotti<damian@famaf.unc.edu.ar>"
 
 ARG zeppelin_version=0.12.1
-ARG spark_version=3.5.6
+ARG spark_version=3.5.9
 ARG hadoop_version="3"
 ARG spark_download_url=https://archive.apache.org/dist/spark
 
@@ -79,7 +79,7 @@ RUN set -ex && \
     mamba clean -ay
     # Allow to modify conda packages. This allows malicious code to be injected into other interpreter sessions, therefore it is disabled by default
     # chmod -R ug+rwX /opt/conda
-ENV PATH /opt/conda/envs/python_3_with_R/bin:/opt/conda/bin:$PATH
+ENV PATH=/opt/conda/envs/python_3_with_R/bin:/opt/conda/bin:$PATH
 
 RUN echo "$LOG_TAG Download Zeppelin binary" && \
     mkdir -p ${ZEPPELIN_HOME} && \
