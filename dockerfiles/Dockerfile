@@ -56,8 +56,18 @@ RUN echo "$LOG_TAG install basic packages" && \
 ARG miniconda_version="py39_24.1.2-0"
 # Hashes via https://docs.conda.io/en/latest/miniconda_hashes.html
 ARG miniconda_sha256="2ec135e4ae2154bb41e8df9ecac7ef23a7d6ca59fc1c8071cfe5298505c19140"
-# Install python and R packages via conda
+# Install python and R packages via conda.
+#
+# El .yml es la fuente editable (que se quiere), el .lock es lo que se instala
+# (versiones exactas con hash, plataforma linux-64). Asi la imagen no cambia
+# cuando cambian las versiones en conda-forge, y la build no necesita resolver.
+#
+# Para regenerar el lock despues de editar el .yml:
+#   1. instalar desde el .yml:  mamba env create -f /env_python_3_with_R.yml
+#   2. dentro de la imagen ya construida y probada:
+#        conda list --explicit -p /opt/conda/envs/python_3_with_R > context/env_python_3_with_R.lock
 COPY env_python_3_with_R.yml /env_python_3_with_R.yml
+COPY env_python_3_with_R.lock /env_python_3_with_R.lock
 
 RUN set -ex && \
     wget -nv https://repo.anaconda.com/miniconda/Miniconda3-${miniconda_version}-Linux-x86_64.sh -O miniconda.sh && \
@@ -68,9 +78,10 @@ RUN set -ex && \
     conda config --set always_yes yes --set changeps1 no && \
     conda info -a && \
     conda install mamba -c conda-forge && \
-    # Upstream usa 'mamba env update --prune', que en mamba 2.x falla si el env
-    # no existe ("No prefix found"). Al construir desde cero corresponde create.
-    mamba env create -f /env_python_3_with_R.yml && \
+    # Upstream usa 'mamba env update --prune' sobre el .yml; se instala desde el
+    # .lock para fijar las versiones (ver arriba como regenerarlo).
+    mamba create -y -p /opt/conda/envs/python_3_with_R \
+        --file /env_python_3_with_R.lock && \
     # Cleanup
     rm -v miniconda.sh anaconda.sha256  && \
     # Cleanup based on https://github.com/ContinuumIO/docker-images/commit/cac3352bf21a26fa0b97925b578fb24a0fe8c383
