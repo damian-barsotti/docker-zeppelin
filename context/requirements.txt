@@ -1,3 +1,3 @@
-# plotly y el resto del stack Python vienen de env_python_3_with_R.yml.
-# Este archivo queda para dependencias que se instalen por pip.
+# plotly and the rest of the Python stack come from env_python_3_with_R.yml.
+# This file is for dependencies that have to be installed with pip.
 graphframes-py~=0.12.2
