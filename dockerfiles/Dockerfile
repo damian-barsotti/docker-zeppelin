@@ -1,8 +1,8 @@
-# Basado en el Dockerfile oficial de Zeppelin:
+# Based on the official Zeppelin Dockerfile:
 #   https://github.com/apache/zeppelin/blob/v0.12.1/scripts/docker/zeppelin/bin/Dockerfile
-# Se construye la imagen desde cero, en vez de partir de apache/zeppelin, para
-# poder crear el env conda con Python 3.11: el yml de upstream pinnea
-# python=3.7, donde plotly 6.x no se puede instalar.
+# The image is built from scratch instead of deriving from apache/zeppelin so
+# that the conda env can be created with Python 3.11: upstream pins python=3.7
+# in its yml, where plotly 6.x cannot be installed.
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -39,8 +39,8 @@ ENV LOG_TAG="[ZEPPELIN_${Z_VERSION}]:" \
     ZEPPELIN_ADDR="0.0.0.0" \
     SPARK_HOME="/opt/spark"
 
-# A los paquetes de upstream se agregan los del curso: bash-completion,
-# iputils-ping, less, screen (lo usa start.sh) y mc.
+# Upstream's packages plus the ones the course needs: bash-completion,
+# iputils-ping, less, screen (used by start.sh) and mc.
 RUN echo "$LOG_TAG install basic packages" && \
     apt-get -y update && \
     # Switch back to install JRE instead of JDK when moving to JDK9 or later.
@@ -58,13 +58,13 @@ ARG miniconda_version="py39_24.1.2-0"
 ARG miniconda_sha256="2ec135e4ae2154bb41e8df9ecac7ef23a7d6ca59fc1c8071cfe5298505c19140"
 # Install python and R packages via conda.
 #
-# El .yml es la fuente editable (que se quiere), el .lock es lo que se instala
-# (versiones exactas con hash, plataforma linux-64). Asi la imagen no cambia
-# cuando cambian las versiones en conda-forge, y la build no necesita resolver.
+# The .yml is the editable source (what is wanted), the .lock is what actually
+# gets installed (exact versions with hashes, platform linux-64). That keeps the
+# image from drifting when conda-forge moves, and skips the solve at build time.
 #
-# Para regenerar el lock despues de editar el .yml:
-#   1. instalar desde el .yml:  mamba env create -f /env_python_3_with_R.yml
-#   2. dentro de la imagen ya construida y probada:
+# To regenerate the lock after editing the .yml:
+#   1. install from the .yml:  mamba env create -f /env_python_3_with_R.yml
+#   2. from the built and tested image:
 #        conda list --explicit -p /opt/conda/envs/python_3_with_R > context/env_python_3_with_R.lock
 COPY env_python_3_with_R.yml /env_python_3_with_R.yml
 COPY env_python_3_with_R.lock /env_python_3_with_R.lock
@@ -78,8 +78,8 @@ RUN set -ex && \
     conda config --set always_yes yes --set changeps1 no && \
     conda info -a && \
     conda install mamba -c conda-forge && \
-    # Upstream usa 'mamba env update --prune' sobre el .yml; se instala desde el
-    # .lock para fijar las versiones (ver arriba como regenerarlo).
+    # Upstream runs 'mamba env update --prune' on the .yml; install from the
+    # .lock instead to pin the versions (see above on how to regenerate it).
     mamba create -y -p /opt/conda/envs/python_3_with_R \
         --file /env_python_3_with_R.lock && \
     # Cleanup
@@ -112,7 +112,7 @@ COPY log4j_docker.properties ${ZEPPELIN_HOME}/conf/
 COPY log4j2.properties ${ZEPPELIN_HOME}/conf/
 COPY log4j2_docker.properties ${ZEPPELIN_HOME}/conf/
 
-# --- Agregados del curso -----------------------------------------------------
+# --- Course additions --------------------------------------------------------
 
 RUN find -name \._\* -type f -exec rm -f {} \; || true
 
@@ -134,6 +134,14 @@ RUN echo "Install Spark" && \
     chmod 775 ${SPARK_HOME}
 
 RUN mkdir -p /opt/zeppelin/.cache && chmod 775 /opt/zeppelin/.cache
+
+# The notebook volume is mounted under /home/jovyan, the persistent path used
+# by the hosted JupyterLab environments. The container runs as an arbitrary uid
+# (docker run -u $(id -u)) whose primary group is root, so the directory is
+# owned by group root and group-writable, as upstream does for ZEPPELIN_HOME.
+RUN mkdir -p /home/jovyan/notebook && \
+    chgrp -R root /home/jovyan && \
+    chmod -R 775 /home/jovyan
 
 RUN --mount=type=bind,source=./requirements.txt,target=/tmp/requirements.txt \
     pip install -r /tmp/requirements.txt
